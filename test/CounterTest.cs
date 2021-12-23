@@ -67,4 +67,18 @@ public class CounterTest
     var comp = ctx.RenderComponent<Counter>(parameters => parameters.Add(p => p.currentCount, count));
     comp.Find("p").TextContent.MarkupMatches($"Current count: {count}");
   }
+
+  [Test]
+  public void CountShouldBe5_AfterInit()
+  {
+    using var ctx = new Bunit.TestContext();
+
+    var count = 5;
+    var comp = ctx.RenderComponent<Counter>();
+    var elm = comp.Find("p");
+    elm.TextContent.MarkupMatches("Current count: 0");
+
+    comp.SetParametersAndRender(parameters => parameters.Add(p => p.currentCount, count));
+    elm.TextContent.MarkupMatches($"Current count: {count}");
+  }
 }
