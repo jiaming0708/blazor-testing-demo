@@ -26,4 +26,17 @@ public class CounterTest
 
     StringAssert.Contains("Current count: 1", comp.Markup);
   }
+  
+  [Test]
+  public void CounterShouldIncrementWhenClicked_CompareWithFirst()
+  {
+    using var ctx = new Bunit.TestContext();
+
+    var comp = ctx.RenderComponent<Counter>();
+    comp.Find("button").Click();
+
+    var diffs = comp.GetChangesSinceFirstRender();
+    var diff = diffs.ShouldHaveSingleChange();
+    diff.ShouldBeTextChange("Current count: 1");
+  }
 }
