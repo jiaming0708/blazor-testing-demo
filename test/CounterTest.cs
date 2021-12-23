@@ -57,4 +57,14 @@ public class CounterTest
     var diff = diffs.ShouldHaveSingleChange();
     diff.ShouldBeTextChange("Current count: 2");
   }
+  
+  [Test]
+  public void CountShouldBe5_OnInit()
+  {
+    using var ctx = new Bunit.TestContext();
+
+    var count = 5;
+    var comp = ctx.RenderComponent<Counter>(parameters => parameters.Add(p => p.currentCount, count));
+    comp.Find("p").TextContent.MarkupMatches($"Current count: {count}");
+  }
 }
