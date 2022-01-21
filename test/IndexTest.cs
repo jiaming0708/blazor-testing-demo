@@ -20,4 +20,15 @@ public class IndexTest
     Assert.False(comp.HasComponent<SurveyPrompt>());
     Assert.True(comp.HasComponent<Stub<SurveyPrompt>>());
   }
+
+  [Test]
+  public void MockChildCompContent()
+  {
+    using var ctx = new Bunit.TestContext();
+    var content = "<div>Mock SurveyPrompt</div>";
+    ctx.ComponentFactories.AddStub<SurveyPrompt>(content);
+
+    var comp = ctx.RenderComponent<Index>();
+    StringAssert.Contains(content, comp.Markup);
+  }
 }
