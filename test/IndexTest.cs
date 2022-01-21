@@ -31,4 +31,14 @@ public class IndexTest
     var comp = ctx.RenderComponent<Index>();
     StringAssert.Contains(content, comp.Markup);
   }
+
+  [Test]
+  public void MockChildCompContentWithParameter()
+  {
+    using var ctx = new Bunit.TestContext();
+    ctx.ComponentFactories.AddStub<SurveyPrompt>(paras => $"<div>{paras.Get(x => x.Title)}</div>");
+
+    var comp = ctx.RenderComponent<Index>();
+    StringAssert.Contains("How is Blazor working for you?", comp.Markup);
+  }
 }
