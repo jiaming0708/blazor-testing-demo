@@ -40,4 +40,19 @@ public class FetchDataTest
       Assert.IsNotNull(comp.Find(".table"));
     });
   }
+
+  [Test]
+  public void RenderMockResponse_WaitState()
+  {
+    using var ctx = new Bunit.TestContext();
+    var mock = ctx.Services.AddMockHttpClient();
+    mock.When("/sample-data/weather.json").RespondJson(new List<FetchData.WeatherForecast>
+    {
+      new() {Date = new DateTime(2022, 01, 20), TemperatureC = 15, Summary = "first data"}
+    });
+
+    var comp = ctx.RenderComponent<FetchData>();
+    comp.WaitForState(() => !comp.Markup.Contains("Loading..."));
+    Assert.IsNotNull(comp.Find(".table"));
+  }
 }
