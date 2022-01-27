@@ -7,6 +7,7 @@ using Bunit;
 using client.Pages;
 using client.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using test.mocks;
@@ -55,6 +56,25 @@ public class FetchDataTest
     {
       new() {Date = new DateTime(2022, 01, 20), TemperatureC = 15, Summary = "first data"}
     });
+
+    var comp = ctx.RenderComponent<FetchData>();
+    comp.WaitForState(() => !comp.Markup.Contains("Loading..."));
+    Assert.IsNotNull(comp.Find(".table"));
+  }
+
+  [Test]
+  public void MockService()
+  {
+    using var ctx = new Bunit.TestContext();
+
+    var mockService = new Mock<IDataService>();
+    mockService
+      .Setup(p => p.GetWeatherForecast())
+      .ReturnsAsync(new List<FetchData.WeatherForecast>
+      {
+        new() {Date = new DateTime(2022, 01, 20), TemperatureC = 15, Summary = "first data"}
+      }.ToArray());
+    ctx.Services.AddSingleton<IDataService>(mockService.Object);
 
     var comp = ctx.RenderComponent<FetchData>();
     comp.WaitForState(() => !comp.Markup.Contains("Loading..."));
