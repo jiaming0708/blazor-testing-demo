@@ -20,6 +20,7 @@ public class CounterTest
   public void CounterShouldIncrementWhenClicked()
   {
     using var ctx = new Bunit.TestContext();
+    ctx.JSInterop.Setup<int>("incrementCount", 0).SetResult(1);
 
     var comp = ctx.RenderComponent<Counter>();
     comp.Find("button").Click();
@@ -31,6 +32,7 @@ public class CounterTest
   public void CounterShouldIncrementWhenClicked_CompareWithFirst()
   {
     using var ctx = new Bunit.TestContext();
+    ctx.JSInterop.Setup<int>("incrementCount", 0).SetResult(1);
 
     var comp = ctx.RenderComponent<Counter>();
     comp.Find("button").Click();
@@ -44,13 +46,18 @@ public class CounterTest
   public void CounterShouldIncrementWhenClicked_CompareWithSnapshot()
   {
     using var ctx = new Bunit.TestContext();
+    var count = 0;
+    var jsruntime = ctx.JSInterop.Setup<int>("incrementCount", count);
 
     var comp = ctx.RenderComponent<Counter>();
     var button = comp.Find("button");
+    jsruntime.SetResult(1);
     button.Click();
 
     comp.SaveSnapshot();
 
+    jsruntime = ctx.JSInterop.Setup<int>("incrementCount", 1);
+    jsruntime.SetResult(2);
     button.Click();
 
     var diffs = comp.GetChangesSinceSnapshot();
